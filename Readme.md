@@ -1,7 +1,7 @@
 # Личный проект «Кексобукинг» [![Build status][travis-image]][travis-url]
 
 * Студент: [Александр Фролов](https://up.htmlacademy.ru/javascript/14/user/31893).
-* Наставник: `Неизвестно`.
+* Наставник: `Я сам по себе`.
 
 ---
 
