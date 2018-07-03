@@ -1,3 +1,5 @@
+'use strict';
+
 var hotels = [];
 var titles = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
 var typeArray = ['palace', 'flat', 'house', 'bungalo'];
@@ -39,7 +41,7 @@ for (var i = 0; i <= 7; i++) {
 }
 
 function randomInteger(min, max) {
-  var rand = min - 0.5 + Math.random() * (max - min + 1)
+  var rand = min - 0.5 + Math.random() * (max - min + 1);
   rand = Math.round(rand);
   return rand;
 }
