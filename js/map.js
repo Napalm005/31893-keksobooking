@@ -6,10 +6,17 @@ var features = ['wifi', 'dishwasher', 'parking', 'washer', 'elevator', 'conditio
 var photos = ['http://o0.github.io/assets/images/tokyo/hotel1.jpg', 'http://o0.github.io/assets/images/tokyo/hotel2.jpg', 'http://o0.github.io/assets/images/tokyo/hotel3.jpg'];
 
 
-for (var i = 0; i < 8; i++) {
+var typeAppartaments = {
+  palace: 'Дворец',
+  bungalo: 'Бунгало',
+  flat: 'Квартира',
+  house: 'Дом'
+};
+
+for (var i = 0; i <= 7; i++) {
   var hotel = {
     'author': {
-      'avatar': 'img/avatars/user-0' + (i + 1) + '.png'
+      'avatar': 'img/avatars/user0' + (i + 1) + '.png'
     },
     'offer': {
       'title': titles[i],
@@ -43,6 +50,49 @@ function compareRandom(a, b) {
   return Math.random() - 0.5;
 }
 
-console.log(hotels);
+var mapPins = document.querySelector('.map__pins');
+var map = document.querySelector('.map');
 
+var template = document.querySelector('template');
+var similarPinTemplate = template.content.querySelector('.map__pin');
+var similarCardTemplate = template.content.querySelector('.map__card');
+
+var renderPin = function (pin) {
+  var pinElement = similarPinTemplate.cloneNode(true);
+
+  pinElement.style.left = pin.location.x + 'px';
+  pinElement.style.top = pin.location.y + 'px';
+  pinElement.style.transform = 'translate(-50%,-50%)';
+
+  var pinElementImg = pinElement.querySelector('img');
+  pinElementImg.src = pin.author.avatar;
+  pinElementImg.alt = pin.offer.title;
+
+  return pinElement;
+};
+
+var renderCard = function (card) {
+  var cardElement = similarCardTemplate.cloneNode(true);
+
+  cardElement.querySelector('.popup__title').innerHTML = card.offer.title;
+  cardElement.querySelector('.popup__text--address').innerHTML = card.offer.address;
+  cardElement.querySelector('.popup__text--price').innerHTML = card.offer.price + '₽/ночь';
+  cardElement.querySelector('.popup__type').innerHTML = typeAppartaments[card.offer.type];
+  cardElement.querySelector('.popup__text--capacity').innerHTML = card.offer.rooms + ' комнаты для ' + card.offer.guests + ' гостей';
+  cardElement.querySelector('.popup__text--time').innerHTML = 'Заезд после ' + card.offer.checkin + ', выезд до ' + card.offer.checkout;
+  cardElement.querySelector('.popup__features').innerHTML = card.features.split(', ');
+  cardElement.querySelector('.popup__description').innerHTML = card.offer.description;
+  cardElement.querySelector('.popup__photos').innerHTML = card.offer.photos;
+
+  return cardElement;
+};
+
+var fragment = document.createDocumentFragment();
+for (var index = 0; index < hotels.length; index++) {
+  fragment.appendChild(renderPin(hotels[index]));
+}
+mapPins.appendChild(fragment);
+map.appendChild(renderCard(hotels[0]));
+
+map.classList.remove('map--faded');
 
