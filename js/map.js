@@ -1,5 +1,22 @@
 'use strict';
 
+var mapPins = document.querySelector('.map__pins');
+var map = document.querySelector('.map');
+
+var template = document.querySelector('template');
+var similarPinTemplate = template.content.querySelector('.map__pin');
+var similarCardTemplate = template.content.querySelector('.map__card');
+
+var randomInteger = function (min, max) {
+  var rand = min - 0.5 + Math.random() * (max - min + 1);
+  rand = Math.round(rand);
+  return rand;
+};
+
+var compareRandom = function () {
+  return Math.random() - 0.5;
+};
+
 var hotels = [];
 var titles = ['Большая уютная квартира', 'Маленькая неуютная квартира', 'Огромный прекрасный дворец', 'Маленький ужасный дворец', 'Красивый гостевой домик', 'Некрасивый негостеприимный домик', 'Уютное бунгало далеко от моря', 'Неуютное бунгало по колено в воде'];
 var typeArray = ['palace', 'flat', 'house', 'bungalo'];
@@ -32,7 +49,7 @@ for (var i = 0; i <= 7; i++) {
       'photos': photos.sort(compareRandom)
     },
     'location': {
-      'x': randomInteger(130, 630),
+      'x': randomInteger(0, mapPins.offsetWidth),
       'y': randomInteger(130, 630)
     }
   };
@@ -40,22 +57,6 @@ for (var i = 0; i <= 7; i++) {
   hotels.push(hotel);
 }
 
-function randomInteger(min, max) {
-  var rand = min - 0.5 + Math.random() * (max - min + 1);
-  rand = Math.round(rand);
-  return rand;
-}
-
-function compareRandom() {
-  return Math.random() - 0.5;
-}
-
-var mapPins = document.querySelector('.map__pins');
-var map = document.querySelector('.map');
-
-var template = document.querySelector('template');
-var similarPinTemplate = template.content.querySelector('.map__pin');
-var similarCardTemplate = template.content.querySelector('.map__card');
 
 var renderFeatures = function (featuresList) {
   var featuresStr = '';
@@ -104,13 +105,45 @@ var renderCard = function (card) {
   return cardElement;
 };
 
+var renderCardList = function () {
+  var fragment = document.createDocumentFragment();
+  for (var index = 0; index < hotels.length; index++) {
+    fragment.appendChild(renderPin(hotels[index]));
+  }
+  mapPins.appendChild(fragment);
+};
 
-var fragment = document.createDocumentFragment();
-for (var index = 0; index < hotels.length; index++) {
-  fragment.appendChild(renderPin(hotels[index]));
-}
-mapPins.appendChild(fragment);
 
-map.appendChild(renderCard(hotels[0]));
+var mapPinMain = document.querySelector('.map__pin--main');
+var adForm = document.querySelector('.ad-form');
+var fieldsetItems = adForm.querySelectorAll('fieldset');
 
-map.classList.remove('map--faded');
+var setAddressFieldValue = function () {
+  document.querySelector('#address').value = (parseInt(mapPinMain.style.left, 10) + mapPinMain.offsetWidth / 2) + ',' + (parseInt(mapPinMain.style.top, 10) + mapPinMain.offsetHeight);
+};
+var setActivePageState = function () {
+  map.classList.remove('map--faded');
+  adForm.classList.remove('ad-form--disabled');
+  for (var j = 0; j < fieldsetItems.length; j++) {
+    fieldsetItems[j].disabled = false;
+  }
+  setAddressFieldValue();
+};
+var setUnActivePageState = function () {
+  map.classList.add('map--faded');
+  adForm.classList.add('ad-form--disabled');
+  for (var j = 0; j < fieldsetItems.length; j++) {
+    fieldsetItems[j].disabled = true;
+  }
+};
+
+var onMarkPositionChange = function () {
+  setActivePageState();
+  renderCardList();
+  setAddressFieldValue();
+  map.appendChild(renderCard(hotels[0]));
+};
+
+mapPinMain.addEventListener('mouseup', onMarkPositionChange);
+
+setUnActivePageState();
